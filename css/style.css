@@ -41,7 +41,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
 body {
   background: var(--bg);
@@ -274,11 +274,13 @@ h1, h2, h3, h4 {
 
 .nav__toggle {
   display: none;
+  position: relative;
+  z-index: 601;
   width: 42px;
   height: 42px;
   border-radius: 50%;
   border: 1px solid var(--border-gold);
-  background: transparent;
+  background: var(--bg);
   color: var(--gold-dim);
   font-size: 1.2rem;
   cursor: pointer;
@@ -890,18 +892,29 @@ html.js-reveal [data-reveal].is-visible { opacity: 1; transform: translateY(0); 
   .topbar { display: none; }
   .nav__links {
     position: fixed;
-    top: 0; right: -100%;
+    top: 0; right: 0;
     width: min(78vw, 320px);
     height: 100vh;
     background: var(--bg);
     flex-direction: column;
     justify-content: center;
     gap: 30px;
-    transition: right var(--transition);
+    transform: translateX(100%);
+    transition: transform var(--transition);
     box-shadow: -20px 0 50px rgba(32,28,23,0.18);
     z-index: 600;
   }
-  .nav__links.is-open { right: 0; }
+  .nav__links.is-open { transform: translateX(0); }
+  .nav-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 590;
+    background: rgba(10, 11, 13, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+  }
+  .nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
   .nav__cta .btn--outline { display: none; }
   .nav__toggle { display: flex; }
   .menu-panel.is-active { grid-template-columns: 1fr; }

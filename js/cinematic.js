@@ -161,7 +161,7 @@
     resize();
 
     var colors = ["#c79a2e", "#8a6a20", "#e4bf5a", "#007b8a", "#1c1a17"];
-    var count = Math.round((isLowPower ? 20 : 42) * scale);
+    var count = Math.round((isLowPower ? 55 : 105) * scale);
     var particles = [];
     for (var i = 0; i < count; i++) {
       var fromLeft = i % 2 === 0;

@@ -21,17 +21,26 @@
   onScroll();
 
   /* Mobile nav toggle --------------------------------------------------- */
+  var navBackdrop = document.querySelector(".nav-backdrop");
   if (navToggle && navLinks) {
+    function closeNav() {
+      navLinks.classList.remove("is-open");
+      if (navBackdrop) navBackdrop.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.innerHTML = "&#9776;";
+    }
     navToggle.addEventListener("click", function () {
       var isOpen = navLinks.classList.toggle("is-open");
+      if (navBackdrop) navBackdrop.classList.toggle("is-open", isOpen);
       navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
       navToggle.innerHTML = isOpen ? "&#10005;" : "&#9776;";
     });
     navLinks.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () {
-        navLinks.classList.remove("is-open");
-        navToggle.innerHTML = "&#9776;";
-      });
+      a.addEventListener("click", closeNav);
+    });
+    if (navBackdrop) navBackdrop.addEventListener("click", closeNav);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeNav();
     });
   }
 
