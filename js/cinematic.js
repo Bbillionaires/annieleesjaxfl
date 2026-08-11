@@ -159,7 +159,7 @@
     }
     resize();
 
-    var colors = ["#d4af37", "#f1d98a", "#14a8ba", "#f7f0e1"];
+    var colors = ["#c79a2e", "#8a6a20", "#007b8a", "#1c1a17"];
     var count = isLowPower ? 12 : 24;
     var particles = [];
     for (var i = 0; i < count; i++) {

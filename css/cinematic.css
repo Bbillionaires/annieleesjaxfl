@@ -26,14 +26,16 @@
 [data-pause-offscreen] .steam-wisp,
 [data-pause-offscreen] .gold-flake,
 [data-pause-offscreen] .glaze-sweep::after,
-[data-pause-offscreen] .heat-shimmer::before {
+[data-pause-offscreen] .heat-shimmer-layer,
+[data-pause-offscreen] .hero__frame__inner img {
   animation-play-state: paused;
 }
 [data-pause-offscreen].in-view .kenburns,
 [data-pause-offscreen].in-view .steam-wisp,
 [data-pause-offscreen].in-view .gold-flake,
 [data-pause-offscreen].in-view .glaze-sweep::after,
-[data-pause-offscreen].in-view .heat-shimmer::before {
+[data-pause-offscreen].in-view .heat-shimmer-layer,
+[data-pause-offscreen].in-view .hero__frame__inner img {
   animation-play-state: running;
 }
 
@@ -89,43 +91,38 @@
 
 /* ==========================================================================
    1. CINEMATIC HERO
+   ----------------------------------------------------------------------
+   The hero background is now a soft, light backdrop (matching the site's
+   white theme) rather than a second competing food photo — depth/parallax
+   comes from the abstract glow layer moving against the crisp, richly-lit
+   food shot, which stays the one true visual subject.
    ========================================================================== */
 .hero { isolation: isolate; }
 
-.hero__ambient {
+.hero__backdrop {
   position: absolute;
-  inset: 0;
+  inset: -10%;
   z-index: 0;
-  overflow: hidden;
   pointer-events: none;
-}
-.hero__ambient img {
-  position: absolute;
-  inset: -6% -6%;
-  width: 112%;
-  height: 112%;
-  object-fit: cover;
-  filter: brightness(0.28) saturate(1.05) blur(1.5px);
-  will-change: transform;
-}
-.hero__ambient .kenburns {
-  animation: kenburns 26s var(--ease-soft) infinite alternate;
-}
-.hero__ambient::after {
-  content: "";
-  position: absolute;
-  inset: 0;
   background:
-    linear-gradient(120deg, rgba(10,11,13,0.88) 0%, rgba(10,11,13,0.62) 32%, rgba(10,11,13,0.5) 55%, rgba(10,11,13,0.94) 100%),
-    linear-gradient(180deg, rgba(10,11,13,0.3) 0%, transparent 30%, rgba(10,11,13,0.55) 75%, rgba(10,11,13,0.95) 100%),
-    radial-gradient(circle at 78% 70%, rgba(212,175,55,0.16), transparent 55%);
-}
-@keyframes kenburns {
-  from { transform: scale(1) translate3d(0,0,0); }
-  to   { transform: scale(1.12) translate3d(-1%, -1%, 0); }
+    radial-gradient(circle at 20% 24%, rgba(0,123,138,0.14), transparent 46%),
+    radial-gradient(circle at 82% 18%, rgba(199,154,46,0.16), transparent 42%),
+    radial-gradient(circle at 76% 86%, rgba(199,154,46,0.12), transparent 48%);
+  filter: blur(2px);
 }
 
 .hero__grid, .scroll-cue { position: relative; z-index: 1; }
+
+/* Continuous slow cinematic push on the hero food shot — always-on, not
+   scroll-linked, so the food reads as quietly alive the moment it loads. */
+.hero__frame__inner img {
+  animation: cinematic-push 22s var(--ease-soft) infinite alternate;
+  transform-origin: 52% 46%;
+}
+@keyframes cinematic-push {
+  from { transform: scale(1); }
+  to   { transform: scale(1.09); }
+}
 
 /* Text reveal ------------------------------------------------------------ */
 .reveal-lines { overflow: hidden; display: block; }
@@ -175,10 +172,11 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
   bottom: 0;
   width: 34%;
   height: 100%;
-  background: radial-gradient(ellipse at 50% 100%, rgba(255,250,240,0.55), rgba(255,250,240,0) 70%);
-  filter: blur(6px);
+  background: radial-gradient(ellipse at 50% 100%, rgba(255,252,245,0.85), rgba(255,252,245,0) 72%);
+  filter: blur(5px);
   opacity: 0;
   border-radius: 50%;
+  mix-blend-mode: screen;
   animation: steam-rise 7s ease-in var(--steam-delay, 0s) infinite;
 }
 .steam-wisp:nth-child(1) { left: 6%;  --steam-delay: 0s;   --steam-drift: 14px; width: 30%; filter: blur(5px); }
@@ -187,8 +185,8 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
 
 @keyframes steam-rise {
   0%   { transform: translate(0, 0) scale(0.7); opacity: 0; }
-  12%  { opacity: 0.5; }
-  50%  { transform: translate(calc(var(--steam-drift, 12px) * 0.6), -55%) scale(1.05); opacity: 0.32; }
+  14%  { opacity: 0.75; }
+  50%  { transform: translate(calc(var(--steam-drift, 12px) * 0.6), -55%) scale(1.05); opacity: 0.5; }
   100% { transform: translate(var(--steam-drift, 12px), -105%) scale(1.5); opacity: 0; }
 }
 
@@ -197,15 +195,21 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
   .steam-wisp:nth-child(3) { display: none; }
 }
 
+/* Steam that rises from inside a photo (rather than off the top edge of a
+   frame sitting on a light background) needs to stay over the photo's own
+   darker tones to read at all — otherwise a near-white wisp just vanishes
+   against a light page background. Used for the hero food shot. */
+.steam-field--inset { bottom: 54%; height: 50%; z-index: 3; }
+
 /* ==========================================================================
-   3. HEAT DISTORTION (used only at the "fresh from the oven" story step)
+   3. HEAT DISTORTION
+   ----------------------------------------------------------------------
+   A real child element (not a ::before) so it can be combined with
+   glaze-sweep/cursor-light, which already claim ::after/::before on the
+   same food photo.
    ========================================================================== */
-.heat-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.heat-shimmer::before {
-  content: "";
+.heat-shimmer { position: relative; overflow: hidden; }
+.heat-shimmer-layer {
   position: absolute;
   left: 8%;
   right: 8%;
@@ -229,8 +233,10 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
   50%      { transform: translateX(1.5%) scaleY(1.03); }
 }
 @media (max-width: 760px) {
-  .heat-shimmer::before { filter: blur(1.5px); }
+  .heat-shimmer-layer { filter: blur(1.5px); }
 }
+[data-pause-offscreen] .heat-shimmer-layer { animation-play-state: paused; }
+[data-pause-offscreen].in-view .heat-shimmer-layer { animation-play-state: running; }
 
 /* ==========================================================================
    4. GLAZE / LIGHTING SWEEP + CURSOR LIGHT
@@ -411,9 +417,9 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
    9. ASSEMBLY STORY (sticky scroll)
    ========================================================================== */
 .story {
-  background: var(--black-2);
-  border-top: 1px solid rgba(212,175,55,0.16);
-  border-bottom: 1px solid rgba(212,175,55,0.16);
+  background: var(--surface);
+  border-top: 1px solid var(--border-gold);
+  border-bottom: 1px solid var(--border-gold);
 }
 .story__grid {
   display: grid;
@@ -467,13 +473,13 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
 .story__step-index {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  color: var(--gold);
+  color: var(--gold-dim);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin-bottom: 10px;
   display: block;
 }
-.story__step h3 { color: var(--white); font-size: 1.6rem; margin-bottom: 10px; }
+.story__step h3 { color: var(--ink); font-size: 1.6rem; margin-bottom: 10px; }
 .story__step p { color: var(--text-muted); }
 .story__cta { margin-top: 4px; }
 
@@ -541,7 +547,7 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
   margin-bottom: 16px;
 }
 .viewer__name { font-size: clamp(1.6rem, 3vw, 2.3rem); color: var(--white); margin-bottom: 14px; }
-.viewer__desc { color: var(--text-muted); margin-bottom: 22px; }
+.viewer__desc { color: var(--text-muted-on-dark); margin-bottom: 22px; }
 .viewer__price { font-family: var(--font-display); color: var(--gold); font-size: 1.4rem; margin-bottom: 22px; }
 .viewer__ingredients { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
 .viewer__ingredients span {
@@ -596,12 +602,13 @@ html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px
    above off. Content, layout, and functionality are unaffected.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hero__ambient .kenburns,
+  .kenburns,
   .steam-wisp,
-  .heat-shimmer::before,
+  .heat-shimmer-layer,
   .glaze-sweep::after,
   .gold-flake,
   [data-scroll-zoom],
+  .hero__frame__inner img,
   .viewer__media img {
     animation: none !important;
     transition: none !important;

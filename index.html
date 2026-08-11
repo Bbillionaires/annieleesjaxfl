@@ -44,7 +44,7 @@
 <header class="site-header">
   <div class="container nav">
     <a href="#home" class="brand">
-      <img class="brand__logo" src="assets/img/logo/annie-lees-logo-light.png" alt="Annie Lee's Bakery x Diner">
+      <img class="brand__logo" src="assets/img/logo/annie-lees-logo.png" alt="Annie Lee's Bakery x Diner">
       <span class="brand__tagline">Jacksonville, Florida</span>
     </a>
 
@@ -69,9 +69,7 @@
   <!-- HERO ================================================== -->
   <section id="home" class="hero" data-pause-offscreen>
 
-    <div class="hero__ambient" data-parallax="0.16">
-      <img class="kenburns" src="assets/img/gallery/jamaica-treats.jpg" alt="" aria-hidden="true">
-    </div>
+    <div class="hero__backdrop" data-parallax="0.1" aria-hidden="true"></div>
 
     <canvas class="confetti-canvas" aria-hidden="true"></canvas>
     <div class="sparkle-field" data-parallax="0.08" aria-hidden="true">
@@ -93,8 +91,8 @@
         </h1>
         <p class="lead">Elevated Southern comfort plates, hand-crafted pastries, and showstopping custom cakes — served in gold, teal, and black, the colors of our city.</p>
         <div class="btn-row">
-          <a href="#cakes" class="btn btn--gold">View Our Cakes</a>
-          <a href="#menu" class="btn btn--outline">See the Menu</a>
+          <a href="#visit" class="btn btn--gold">Order Now</a>
+          <a href="#menu" class="btn btn--outline">View Menu</a>
         </div>
         <div class="hero__stats">
           <div><strong>500+</strong><span>Custom Cakes Baked</span></div>
@@ -103,10 +101,16 @@
         </div>
       </div>
 
-      <div class="hero__frame-wrap" data-parallax="-0.1" data-reveal>
+      <div class="hero__frame-wrap" data-parallax="-0.12" data-reveal>
         <div class="hero__frame">
           <div class="hero__frame__inner glaze-sweep cursor-light">
-            <img data-scroll-zoom src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Custom Sweet 16 Paris-themed cake by Annie Lee's Bakery &amp; Diner">
+            <img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Custom Sweet 16 Paris-themed cake by Annie Lee's Bakery &amp; Diner">
+            <span class="heat-shimmer-layer" aria-hidden="true"></span>
+            <div class="steam-field steam-field--inset" aria-hidden="true">
+              <span class="steam-wisp"></span>
+              <span class="steam-wisp"></span>
+              <span class="steam-wisp"></span>
+            </div>
           </div>
         </div>
         <div class="flake-field" aria-hidden="true">
@@ -171,7 +175,7 @@
   </section>
 
   <!-- CUSTOM CAKES / GALLERY (circular frames) ================================================== -->
-  <section id="cakes" class="section" style="background:var(--black-2);" data-pause-offscreen>
+  <section id="cakes" class="section" style="background:var(--surface);" data-pause-offscreen>
     <div class="container">
       <div class="center" data-reveal style="max-width:640px;">
         <div class="eyebrow">Signature Creations</div>
@@ -281,6 +285,7 @@
           </div>
           <div class="story__frame heat-shimmer" data-frame="2">
             <img src="assets/img/gallery/construction-cake.jpg" alt="Freshly baked tiered cake by Annie Lee's">
+            <span class="heat-shimmer-layer" aria-hidden="true"></span>
             <div class="steam-field" aria-hidden="true">
               <span class="steam-wisp"></span><span class="steam-wisp"></span><span class="steam-wisp"></span>
             </div>
@@ -472,7 +477,7 @@
   </section>
 
   <!-- VISIT / CONTACT ================================================== -->
-  <section id="visit" class="section" style="background:var(--black-2);">
+  <section id="visit" class="section" style="background:var(--surface);">
     <div class="container visit">
       <div data-reveal>
         <div class="eyebrow">Visit Us</div>
@@ -533,11 +538,8 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="#home" class="brand">
-          <span class="brand__mark">AL</span>
-          <span class="brand__text">
-            <span class="brand__name">Annie Lee's <em>Bakery &amp; Diner</em></span>
-            <span class="brand__tagline">Jacksonville, Florida</span>
-          </span>
+          <img class="brand__logo" src="assets/img/logo/annie-lees-logo-light.png" alt="Annie Lee's Bakery x Diner">
+          <span class="brand__tagline">Jacksonville, Florida</span>
         </a>
         <p>Elevated comfort food and custom cakes, baked fresh in Jacksonville, FL.</p>
         <div class="footer-socials">
@@ -575,7 +577,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; <span id="year"></span> Annie Lee's Bakery &amp; Diner. All rights reserved.</span>
-      <span>Site design placeholder — logo &amp; nav pending client assets.</span>
+      <span>Nav order &amp; contact info still pending client confirmation.</span>
     </div>
   </div>
 </footer>
@@ -606,7 +608,7 @@
       <div class="viewer__ingredients"></div>
       <div class="viewer__cta">
         <a href="#visit" class="btn btn--gold">Order Something Like This</a>
-        <a href="#visit" class="btn btn--outline">Reserve a Consultation</a>
+        <a href="#visit" class="btn btn--outline btn--on-dark">Reserve a Consultation</a>
       </div>
     </div>
   </div>
