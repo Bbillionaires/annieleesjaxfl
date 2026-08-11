@@ -150,7 +150,8 @@
      space, brand-colored only, capped duration, capped particle count
      (fewer on low-power devices), fully skipped under reduced motion.
      ------------------------------------------------------------------ */
-  function runConfettiBurst(canvas) {
+  function runConfettiBurst(canvas, scale) {
+    scale = scale || 1;
     var ctx = canvas.getContext("2d");
     var parent = canvas.parentElement;
     function resize() {
@@ -159,8 +160,8 @@
     }
     resize();
 
-    var colors = ["#c79a2e", "#8a6a20", "#007b8a", "#1c1a17"];
-    var count = isLowPower ? 12 : 24;
+    var colors = ["#c79a2e", "#8a6a20", "#e4bf5a", "#007b8a", "#1c1a17"];
+    var count = Math.round((isLowPower ? 20 : 42) * scale);
     var particles = [];
     for (var i = 0; i < count; i++) {
       var fromLeft = i % 2 === 0;
@@ -212,13 +213,22 @@
   var confettiCanvas = document.querySelector(".confetti-canvas");
   if (confettiCanvas && !reduceMotion) {
     var confettiFired = false;
+    var heroEl = document.querySelector(".hero");
     var maybeFireConfetti = function () {
       if (confettiFired) return;
       var rect = confettiCanvas.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom > 0) {
         confettiFired = true;
-        setTimeout(function () { runConfettiBurst(confettiCanvas); }, 450);
+        setTimeout(function () { runConfettiBurst(confettiCanvas, 1); }, 450);
         document.removeEventListener("scroll", maybeFireConfetti);
+
+        // A smaller "topper" burst repeats every so often, but only while
+        // the hero is actually on screen — never while scrolled away.
+        setInterval(function () {
+          if (heroEl && heroEl.classList.contains("in-view")) {
+            runConfettiBurst(confettiCanvas, 0.55);
+          }
+        }, 16000);
       }
     };
     maybeFireConfetti();

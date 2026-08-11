@@ -690,6 +690,8 @@ h1, h2, h3, h4 {
 }
 .info-row h4 { color: var(--ink); font-size: 0.95rem; margin-bottom: 4px; }
 .info-row p { color: var(--text-muted); font-size: 0.86rem; margin: 0; }
+.info-row p a { transition: color var(--transition); }
+.info-row p a:hover { color: var(--gold-dim); text-decoration: underline; }
 .info-row .placeholder { color: var(--gold-dim); font-style: italic; }
 
 .form-card {

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# NOTE TO CLIENT: once this site has a real domain, add a Sitemap: line
+# here pointing to https://YOUR-DOMAIN/sitemap.xml.

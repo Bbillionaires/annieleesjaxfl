@@ -82,7 +82,17 @@
 [data-pause-offscreen].in-view .sparkle { animation-play-state: running; }
 
 @media (max-width: 760px) {
-  .sparkle:nth-child(n+5) { display: none; }
+  .sparkle:nth-child(n+8) { display: none; }
+}
+
+/* Sparkles placed directly on food (cakes, and champagne/drinks once we
+   have that photography) — brighter and above the glaze/heat/steam
+   layers so they read as a glint on the surface itself. */
+.sparkle--on-food {
+  z-index: 4;
+  width: 4px;
+  height: 4px;
+  box-shadow: 0 0 8px 2px rgba(255, 250, 230, 0.95), 0 0 18px 5px rgba(212, 175, 55, 0.45);
 }
 @media (prefers-reduced-motion: reduce) {
   .confetti-canvas { display: none; }
