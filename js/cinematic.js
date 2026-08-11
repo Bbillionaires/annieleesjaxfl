@@ -222,13 +222,13 @@
         setTimeout(function () { runConfettiBurst(confettiCanvas, 1); }, 450);
         document.removeEventListener("scroll", maybeFireConfetti);
 
-        // A smaller "topper" burst repeats every so often, but only while
-        // the hero is actually on screen — never while scrolled away.
+        // A smaller "topper" burst repeats every few seconds, but only
+        // while the hero is actually on screen — never while scrolled away.
         setInterval(function () {
           if (heroEl && heroEl.classList.contains("in-view")) {
-            runConfettiBurst(confettiCanvas, 0.55);
+            runConfettiBurst(confettiCanvas, 0.7);
           }
-        }, 16000);
+        }, 7000);
       }
     };
     maybeFireConfetti();
