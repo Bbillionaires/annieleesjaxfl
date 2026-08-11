@@ -1,0 +1,624 @@
+/* ==========================================================================
+   Cinematic food presentation layer
+   ----------------------------------------------------------------------
+   Additive on top of style.css — does not redefine existing components.
+   Every effect here is applied only where real photography supports it
+   (the cake/dessert photos). Nothing here fakes food that isn't real.
+
+   Motion principles used throughout:
+   - transform + opacity only (GPU-friendly, no layout thrash)
+   - one shared easing family for a consistent "premium" feel
+   - everything gated by [data-pause-offscreen] + .in-view so animations
+     stop costing anything once scrolled away
+   - everything gated by prefers-reduced-motion at the bottom of this file
+   ========================================================================== */
+
+:root {
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Pause-offscreen gating -------------------------------------------------
+   Elements carrying decorative looping animation only run it while an
+   ancestor [data-pause-offscreen] is flagged .in-view by cinematic.js.
+   Off-screen, the animation is paused outright — zero main-thread cost. */
+[data-pause-offscreen] .kenburns,
+[data-pause-offscreen] .steam-wisp,
+[data-pause-offscreen] .gold-flake,
+[data-pause-offscreen] .glaze-sweep::after,
+[data-pause-offscreen] .heat-shimmer::before {
+  animation-play-state: paused;
+}
+[data-pause-offscreen].in-view .kenburns,
+[data-pause-offscreen].in-view .steam-wisp,
+[data-pause-offscreen].in-view .gold-flake,
+[data-pause-offscreen].in-view .glaze-sweep::after,
+[data-pause-offscreen].in-view .heat-shimmer::before {
+  animation-play-state: running;
+}
+
+/* ==========================================================================
+   0. PARTY ATMOSPHERE — confetti burst + sparkler twinkles
+   ----------------------------------------------------------------------
+   Kept deliberately restrained: brand-colored only (gold/teal/cream, no
+   rainbow), low particle count, confined to the hero's negative space so
+   it never sits on top of the headline, CTA, or the food photo. Confetti
+   fires once (a "pop" on load, like a party popper) rather than raining
+   continuously. Sparklers are a handful of slow, quiet twinkles.
+   ========================================================================== */
+.confetti-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.sparkle-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sparkle {
+  position: absolute;
+  top: var(--sy, 20%);
+  left: var(--sx, 10%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 6px 1px rgba(241, 217, 138, 0.9), 0 0 14px 4px rgba(212, 175, 55, 0.35);
+  opacity: 0;
+  animation: sparkle-twinkle var(--sdur, 4.5s) ease-in-out var(--sdelay, 0s) infinite;
+}
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50%      { opacity: 0.85; transform: scale(1.3); }
+}
+[data-pause-offscreen] .sparkle { animation-play-state: paused; }
+[data-pause-offscreen].in-view .sparkle { animation-play-state: running; }
+
+@media (max-width: 760px) {
+  .sparkle:nth-child(n+5) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti-canvas { display: none; }
+  .sparkle { animation: none; opacity: 0.5; transform: none; }
+}
+
+/* ==========================================================================
+   1. CINEMATIC HERO
+   ========================================================================== */
+.hero { isolation: isolate; }
+
+.hero__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero__ambient img {
+  position: absolute;
+  inset: -6% -6%;
+  width: 112%;
+  height: 112%;
+  object-fit: cover;
+  filter: brightness(0.28) saturate(1.05) blur(1.5px);
+  will-change: transform;
+}
+.hero__ambient .kenburns {
+  animation: kenburns 26s var(--ease-soft) infinite alternate;
+}
+.hero__ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(10,11,13,0.88) 0%, rgba(10,11,13,0.62) 32%, rgba(10,11,13,0.5) 55%, rgba(10,11,13,0.94) 100%),
+    linear-gradient(180deg, rgba(10,11,13,0.3) 0%, transparent 30%, rgba(10,11,13,0.55) 75%, rgba(10,11,13,0.95) 100%),
+    radial-gradient(circle at 78% 70%, rgba(212,175,55,0.16), transparent 55%);
+}
+@keyframes kenburns {
+  from { transform: scale(1) translate3d(0,0,0); }
+  to   { transform: scale(1.12) translate3d(-1%, -1%, 0); }
+}
+
+.hero__grid, .scroll-cue { position: relative; z-index: 1; }
+
+/* Text reveal ------------------------------------------------------------ */
+.reveal-lines { overflow: hidden; display: block; }
+.reveal-line {
+  display: block;
+  transform: translateY(105%);
+  opacity: 0;
+}
+html.js-reveal .hero h1 .reveal-line,
+html.js-reveal .hero__eyebrow,
+html.js-reveal .hero p.lead,
+html.js-reveal .hero .btn-row,
+html.js-reveal .hero__stats {
+  animation: reveal-up 1.1s var(--ease-cinematic) both;
+}
+html.js-reveal .hero h1 .reveal-line:nth-child(1) { animation-delay: 0.05s; }
+html.js-reveal .hero h1 .reveal-line:nth-child(2) { animation-delay: 0.18s; }
+html.js-reveal .hero h1 .reveal-line:nth-child(3) { animation-delay: 0.31s; }
+html.js-reveal .hero__eyebrow { animation-delay: 0s; transform: translateY(14px); opacity: 0; }
+html.js-reveal .hero p.lead { animation-delay: 0.42s; transform: translateY(18px); opacity: 0; }
+html.js-reveal .hero .btn-row { animation-delay: 0.54s; transform: translateY(18px); opacity: 0; }
+html.js-reveal .hero__stats { animation-delay: 0.64s; transform: translateY(18px); opacity: 0; }
+
+@keyframes reveal-up {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Parallax layers (JS sets --py in px via transform) --------------------- */
+[data-parallax] { transform: translate3d(0, var(--py, 0px), 0); will-change: transform; }
+
+/* ==========================================================================
+   2. STEAM
+   ========================================================================== */
+.steam-field {
+  position: absolute;
+  left: 50%;
+  bottom: 92%;
+  width: 70%;
+  height: 46%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+.steam-wisp {
+  position: absolute;
+  bottom: 0;
+  width: 34%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255,250,240,0.55), rgba(255,250,240,0) 70%);
+  filter: blur(6px);
+  opacity: 0;
+  border-radius: 50%;
+  animation: steam-rise 7s ease-in var(--steam-delay, 0s) infinite;
+}
+.steam-wisp:nth-child(1) { left: 6%;  --steam-delay: 0s;   --steam-drift: 14px; width: 30%; filter: blur(5px); }
+.steam-wisp:nth-child(2) { left: 34%; --steam-delay: 1.6s; --steam-drift: -18px; width: 40%; filter: blur(7px); animation-duration: 8.4s; }
+.steam-wisp:nth-child(3) { left: 60%; --steam-delay: 3.1s; --steam-drift: 10px; width: 28%; filter: blur(6px); animation-duration: 6.6s; }
+
+@keyframes steam-rise {
+  0%   { transform: translate(0, 0) scale(0.7); opacity: 0; }
+  12%  { opacity: 0.5; }
+  50%  { transform: translate(calc(var(--steam-drift, 12px) * 0.6), -55%) scale(1.05); opacity: 0.32; }
+  100% { transform: translate(var(--steam-drift, 12px), -105%) scale(1.5); opacity: 0; }
+}
+
+/* Fewer, cheaper wisps on small screens */
+@media (max-width: 760px) {
+  .steam-wisp:nth-child(3) { display: none; }
+}
+
+/* ==========================================================================
+   3. HEAT DISTORTION (used only at the "fresh from the oven" story step)
+   ========================================================================== */
+.heat-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.heat-shimmer::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 58%;
+  height: 34%;
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    100deg,
+    rgba(255,255,255,0.05) 0px,
+    rgba(255,255,255,0.09) 2px,
+    rgba(255,255,255,0) 6px,
+    rgba(255,255,255,0.05) 10px
+  );
+  filter: blur(3px);
+  mix-blend-mode: overlay;
+  animation: heat-wobble 2.6s ease-in-out infinite;
+}
+@keyframes heat-wobble {
+  0%, 100% { transform: translateX(0) scaleY(1); }
+  50%      { transform: translateX(1.5%) scaleY(1.03); }
+}
+@media (max-width: 760px) {
+  .heat-shimmer::before { filter: blur(1.5px); }
+}
+
+/* ==========================================================================
+   4. GLAZE / LIGHTING SWEEP + CURSOR LIGHT
+   ========================================================================== */
+.glaze-sweep { position: relative; overflow: hidden; }
+.glaze-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255,255,255,0.22) 48%,
+    rgba(255,255,255,0.36) 50%,
+    rgba(255,255,255,0.22) 52%,
+    transparent 60%
+  );
+  background-size: 260% 260%;
+  background-position: -40% -40%;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: glaze-move 6.5s var(--ease-soft) infinite;
+}
+@keyframes glaze-move {
+  0%, 55%  { background-position: -60% -60%; }
+  100%     { background-position: 60% 60%; }
+}
+
+/* Cursor-responsive light (desktop only, JS sets --mx/--my in %) */
+.cursor-light { position: relative; }
+.cursor-light::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,0.22),
+    transparent 32%
+  );
+  transition: opacity 0.35s ease;
+  mix-blend-mode: soft-light;
+}
+.cursor-light.is-active::before { opacity: 1; }
+
+/* ==========================================================================
+   5. MELT / DRIP ONE-SHOT ACCENT
+   ========================================================================== */
+.melt-accent {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  top: 6%;
+  left: 18%;
+  width: 8%;
+  height: 0%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0));
+  border-radius: 0 0 50% 50%;
+  filter: blur(1px);
+  opacity: 0;
+}
+.is-visible .melt-accent {
+  animation: drip-once 2.2s var(--ease-soft) 0.3s 1 both;
+}
+@keyframes drip-once {
+  0%   { height: 0%; opacity: 0; }
+  20%  { opacity: 0.55; }
+  70%  { height: 42%; opacity: 0.4; }
+  100% { height: 46%; opacity: 0; }
+}
+
+/* ==========================================================================
+   6. GOLD-FLAKE INGREDIENT FLOAT
+   ========================================================================== */
+.flake-field { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: visible; }
+.gold-flake {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-light), var(--gold) 70%, transparent);
+  opacity: 0;
+  animation: flake-float 9s ease-in-out infinite;
+}
+.gold-flake:nth-child(1) { top: 18%; left: 12%; animation-delay: 0s; }
+.gold-flake:nth-child(2) { top: 62%; left: 82%; width: 5px; height: 5px; animation-delay: 2.4s; animation-duration: 11s; }
+.gold-flake:nth-child(3) { top: 78%; left: 30%; width: 4px; height: 4px; animation-delay: 4.8s; animation-duration: 8s; }
+@keyframes flake-float {
+  0%   { transform: translate(0,0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.75; }
+  50%  { transform: translate(8px, -22px) rotate(90deg); opacity: 0.5; }
+  85%  { opacity: 0.2; }
+  100% { transform: translate(-6px, -46px) rotate(180deg); opacity: 0; }
+}
+@media (max-width: 760px) {
+  .gold-flake:nth-child(3) { display: none; }
+}
+
+/* ==========================================================================
+   7. PREMIUM MENU / CAKE CARDS
+   ========================================================================== */
+.gallery-item { position: relative; }
+.gallery-item .circle-photo {
+  transition: transform 0.6s var(--ease-soft), outline-color 0.4s ease;
+}
+.gallery-item:hover .circle-photo,
+.gallery-item:focus-within .circle-photo {
+  transform: translateY(-8px);
+}
+.gallery-item .circle-photo img {
+  transition: transform 0.7s var(--ease-soft);
+}
+.gallery-item:hover .circle-photo img,
+.gallery-item:focus-within .circle-photo img {
+  transform: scale(1.045);
+}
+.gallery-item__trigger {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.gallery-item__trigger:focus-visible .circle-photo {
+  outline-color: var(--teal-light);
+  box-shadow: 0 0 0 4px rgba(22, 144, 159, 0.35);
+}
+.gallery-item__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.gallery-item:hover .gallery-item__hint,
+.gallery-item:focus-within .gallery-item__hint,
+.gallery-item__trigger:focus-visible ~ .gallery-item__hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Menu row thumbnails ------------------------------------------------------ */
+.menu-item { align-items: flex-start; }
+.menu-item__thumb {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--gold);
+  margin-right: 14px;
+}
+.menu-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.menu-item__main { display: flex; align-items: flex-start; }
+
+/* ==========================================================================
+   8. SCROLL-CONTROLLED ZOOM
+   ========================================================================== */
+[data-scroll-zoom] {
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.6s linear;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   9. ASSEMBLY STORY (sticky scroll)
+   ========================================================================== */
+.story {
+  background: var(--black-2);
+  border-top: 1px solid rgba(212,175,55,0.16);
+  border-bottom: 1px solid rgba(212,175,55,0.16);
+}
+.story__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 60px;
+}
+.story__media {
+  position: sticky;
+  top: 110px;
+  align-self: start;
+  height: min(70vh, 560px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,0.25);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+  background: var(--black);
+}
+.story__frame {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-cinematic);
+}
+.story__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.story__frame.is-active { opacity: 1; }
+.story__frame .steam-field { bottom: 60%; }
+
+.story__frame-label {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  z-index: 4;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+}
+
+.story__steps { display: flex; flex-direction: column; gap: 18vh; padding: 8vh 0; }
+.story__step {
+  max-width: 460px;
+  opacity: 0.35;
+  transform: translateY(10px);
+  transition: opacity 0.6s var(--ease-soft), transform 0.6s var(--ease-soft);
+}
+.story__step.is-active { opacity: 1; transform: translateY(0); }
+.story__step-index {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+.story__step h3 { color: var(--white); font-size: 1.6rem; margin-bottom: 10px; }
+.story__step p { color: var(--text-muted); }
+.story__cta { margin-top: 4px; }
+
+@media (max-width: 900px) {
+  .story__grid { grid-template-columns: 1fr; }
+  .story__media {
+    position: relative;
+    top: auto;
+    height: 340px;
+    margin-bottom: 10px;
+  }
+  .story__steps { gap: 6vh; padding: 2vh 0; }
+  .story__step { opacity: 1; transform: none; max-width: none; }
+}
+
+/* ==========================================================================
+   10. FULLSCREEN FOOD VIEWER
+   ========================================================================== */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: none;
+  background: #050607;
+}
+.viewer.is-open { display: block; }
+.viewer__inner {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+}
+.viewer__media {
+  position: relative;
+  overflow: hidden;
+  background: var(--black);
+}
+.viewer__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  animation: viewer-zoom 9s var(--ease-soft) forwards;
+}
+@keyframes viewer-zoom {
+  from { transform: scale(1.02); }
+  to   { transform: scale(1.14); }
+}
+.viewer__panel {
+  padding: 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* fallback for browsers without `safe` support */
+  justify-content: safe center;
+  overflow-y: auto;
+}
+.viewer__eyebrow {
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.viewer__name { font-size: clamp(1.6rem, 3vw, 2.3rem); color: var(--white); margin-bottom: 14px; }
+.viewer__desc { color: var(--text-muted); margin-bottom: 22px; }
+.viewer__price { font-family: var(--font-display); color: var(--gold); font-size: 1.4rem; margin-bottom: 22px; }
+.viewer__ingredients { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.viewer__ingredients span {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,0.4);
+  color: var(--cream);
+}
+.viewer__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.viewer__close {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--black);
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+.viewer__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.5);
+  background: rgba(10,11,13,0.55);
+  color: var(--gold);
+  font-size: 1.3rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.viewer__nav--prev { left: 22px; }
+.viewer__nav--next { right: 22px; }
+@media (max-width: 900px) {
+  .viewer__inner { grid-template-columns: 1fr; grid-template-rows: 45vh 1fr; }
+  .viewer__panel { padding: 32px 24px 48px; }
+}
+
+/* ==========================================================================
+   Reduced motion — the single source of truth for turning all of the
+   above off. Content, layout, and functionality are unaffected.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hero__ambient .kenburns,
+  .steam-wisp,
+  .heat-shimmer::before,
+  .glaze-sweep::after,
+  .gold-flake,
+  [data-scroll-zoom],
+  .viewer__media img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .reveal-line { transform: none; opacity: 1; }
+  html.js-reveal .hero h1 .reveal-line,
+  html.js-reveal .hero__eyebrow,
+  html.js-reveal .hero p.lead,
+  html.js-reveal .hero .btn-row,
+  html.js-reveal .hero__stats {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .story__frame { transition: none; }
+  .story__step { opacity: 1; transform: none; }
+  .cursor-light::before { display: none; }
+  .melt-accent { display: none; }
+}

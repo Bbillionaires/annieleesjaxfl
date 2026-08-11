@@ -128,7 +128,9 @@
 
     function closeLightbox() {
       lightbox.classList.remove("is-open");
-      document.body.style.overflow = "";
+      var viewerEl = document.querySelector(".viewer");
+      var viewerOpen = !!(viewerEl && viewerEl.classList.contains("is-open"));
+      if (!viewerOpen) document.body.style.overflow = "";
       var media = lightboxContent.querySelector("img, video");
       if (media && media.tagName === "VIDEO") media.pause();
       if (media) media.remove();

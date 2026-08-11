@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/cinematic.css">
 </head>
 <body>
 
@@ -43,11 +44,8 @@
 <header class="site-header">
   <div class="container nav">
     <a href="#home" class="brand">
-      <span class="brand__mark">AL</span>
-      <span class="brand__text">
-        <span class="brand__name">Annie Lee's <em>Bakery &amp; Diner</em></span>
-        <span class="brand__tagline">Jacksonville, Florida</span>
-      </span>
+      <img class="brand__logo" src="assets/img/logo/annie-lees-logo-light.png" alt="Annie Lee's Bakery x Diner">
+      <span class="brand__tagline">Jacksonville, Florida</span>
     </a>
 
     <ul class="nav__links">
@@ -69,11 +67,30 @@
 <main>
 
   <!-- HERO ================================================== -->
-  <section id="home" class="hero">
+  <section id="home" class="hero" data-pause-offscreen>
+
+    <div class="hero__ambient" data-parallax="0.16">
+      <img class="kenburns" src="assets/img/gallery/jamaica-treats.jpg" alt="" aria-hidden="true">
+    </div>
+
+    <canvas class="confetti-canvas" aria-hidden="true"></canvas>
+    <div class="sparkle-field" data-parallax="0.08" aria-hidden="true">
+      <span class="sparkle" style="--sx:6%; --sy:16%; --sdur:4.2s; --sdelay:0s;"></span>
+      <span class="sparkle" style="--sx:92%; --sy:22%; --sdur:5.1s; --sdelay:0.6s;"></span>
+      <span class="sparkle" style="--sx:14%; --sy:78%; --sdur:4.7s; --sdelay:1.2s;"></span>
+      <span class="sparkle" style="--sx:88%; --sy:70%; --sdur:5.6s; --sdelay:1.8s;"></span>
+      <span class="sparkle" style="--sx:50%; --sy:10%; --sdur:4.9s; --sdelay:2.4s;"></span>
+      <span class="sparkle" style="--sx:8%; --sy:46%; --sdur:5.3s; --sdelay:0.9s;"></span>
+    </div>
+
     <div class="container hero__grid">
       <div data-reveal>
         <div class="hero__eyebrow"><span class="dot"></span> Jacksonville's Bakery &amp; Diner</div>
-        <h1>A Taste of <em>Luxury</em>, Baked From the Heart of Jacksonville</h1>
+        <h1 class="reveal-lines">
+          <span class="reveal-line">A Taste of <em>Luxury</em>,</span>
+          <span class="reveal-line">Baked From the Heart</span>
+          <span class="reveal-line">of Jacksonville</span>
+        </h1>
         <p class="lead">Elevated Southern comfort plates, hand-crafted pastries, and showstopping custom cakes — served in gold, teal, and black, the colors of our city.</p>
         <div class="btn-row">
           <a href="#cakes" class="btn btn--gold">View Our Cakes</a>
@@ -86,9 +103,16 @@
         </div>
       </div>
 
-      <div class="hero__frame" data-reveal>
-        <div class="hero__frame__inner">
-          <img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Custom Sweet 16 Paris-themed cake by Annie Lee's Bakery &amp; Diner">
+      <div class="hero__frame-wrap" data-parallax="-0.1" data-reveal>
+        <div class="hero__frame">
+          <div class="hero__frame__inner glaze-sweep cursor-light">
+            <img data-scroll-zoom src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Custom Sweet 16 Paris-themed cake by Annie Lee's Bakery &amp; Diner">
+          </div>
+        </div>
+        <div class="flake-field" aria-hidden="true">
+          <span class="gold-flake"></span>
+          <span class="gold-flake"></span>
+          <span class="gold-flake"></span>
         </div>
         <div class="hero__frame__badge">Est. <span>Jacksonville</span></div>
       </div>
@@ -147,47 +171,165 @@
   </section>
 
   <!-- CUSTOM CAKES / GALLERY (circular frames) ================================================== -->
-  <section id="cakes" class="section" style="background:var(--black-2);">
+  <section id="cakes" class="section" style="background:var(--black-2);" data-pause-offscreen>
     <div class="container">
       <div class="center" data-reveal style="max-width:640px;">
         <div class="eyebrow">Signature Creations</div>
         <h2 class="section-title">Cakes worth the <em>reveal</em></h2>
-        <p class="section-sub center">A few of our custom builds — framed the modern way. Send over your full catalog of photos and we'll fill this wall out.</p>
+        <p class="section-sub center">A few of our custom builds — framed the modern way. Tap any cake for the full story. Send over your full catalog of photos and we'll fill this wall out.</p>
       </div>
 
       <div class="gallery-grid" data-reveal>
         <div class="gallery-item">
-          <div class="circle-photo" data-lightbox="assets/img/gallery/sweet16-paris-cake.jpg" data-caption="Pink &amp; black Sweet 16 Paris-themed cake">
-            <img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Pink and black Sweet 16 Paris-themed cake with Eiffel Tower topper">
-          </div>
+          <button
+            type="button"
+            class="gallery-item__trigger"
+            data-viewer
+            data-viewer-img="assets/img/gallery/sweet16-paris-cake.jpg"
+            data-viewer-name="Sweet 16 — Paris in Pink"
+            data-viewer-desc="A pink-and-black buttercream tribute to a Paris getaway — hand-piped bows, a rhinestone band, and a mini Eiffel Tower skyline on top."
+            data-viewer-price="Custom cakes from $85"
+            data-viewer-ingredients="Vanilla bean cake, Swiss meringue buttercream, edible rhinestone trim, hand-piped detail">
+            <div class="circle-photo glaze-sweep cursor-light">
+              <img data-scroll-zoom src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Pink and black Sweet 16 Paris-themed cake with Eiffel Tower topper">
+              <span class="melt-accent" aria-hidden="true"></span>
+            </div>
+          </button>
           <h4>Sweet 16 — Paris in Pink</h4>
           <span>Custom Cake</span>
+          <div class="gallery-item__hint">View the full story &rarr;</div>
         </div>
+
         <div class="gallery-item">
-          <div class="circle-photo" data-lightbox="assets/img/gallery/construction-cake.jpg" data-caption="Two-tier construction-themed birthday cake">
-            <img src="assets/img/gallery/construction-cake.jpg" alt="Two-tier construction-themed birthday cake with toy cranes and road signs">
-          </div>
+          <button
+            type="button"
+            class="gallery-item__trigger"
+            data-viewer
+            data-viewer-img="assets/img/gallery/construction-cake.jpg"
+            data-viewer-name="Road Work Birthday"
+            data-viewer-desc="Two tiers of vanilla-buttermilk cake, hand-textured to look like corrugated steel, topped with a working toy crane and a full crew of road signs."
+            data-viewer-price="Custom cakes from $85"
+            data-viewer-ingredients="Buttermilk cake, vanilla buttercream, hand-piped texture, edible &amp; novelty toppers">
+            <div class="circle-photo glaze-sweep cursor-light">
+              <img data-scroll-zoom src="assets/img/gallery/construction-cake.jpg" alt="Two-tier construction-themed birthday cake with toy cranes and road signs">
+            </div>
+          </button>
           <h4>Road Work Birthday</h4>
           <span>Custom Cake</span>
+          <div class="gallery-item__hint">View the full story &rarr;</div>
         </div>
+
         <div class="gallery-item">
-          <div class="circle-photo" data-lightbox="assets/img/gallery/jamaica-treats.jpg" data-caption="Jamaica-themed dessert table with custom cake, cookies, and candy apples">
-            <img src="assets/img/gallery/jamaica-treats.jpg" alt="Jamaica-themed dessert table with custom cake, cookies, and candy apples">
-          </div>
+          <button
+            type="button"
+            class="gallery-item__trigger"
+            data-viewer
+            data-viewer-img="assets/img/gallery/jamaica-treats.jpg"
+            data-viewer-name="Island Celebration Table"
+            data-viewer-desc="A full Jamaica-themed dessert spread — glazed candy apples, iced sugar cookies, and a hand-painted cake, built for an island-proud celebration."
+            data-viewer-price="Dessert tables — quote by size"
+            data-viewer-ingredients="Glazed candy apples, decorated sugar cookies, custom cake, themed favors">
+            <div class="circle-photo glaze-sweep cursor-light">
+              <img data-scroll-zoom src="assets/img/gallery/jamaica-treats.jpg" alt="Jamaica-themed dessert table with custom cake, cookies, and candy apples">
+            </div>
+          </button>
           <h4>Island Celebration Table</h4>
           <span>Dessert Table</span>
+          <div class="gallery-item__hint">View the full story &rarr;</div>
         </div>
+
         <div class="gallery-item">
-          <div class="circle-photo" data-lightbox="assets/img/gallery/team-celebration.jpg" data-caption="The Annie Lee's team celebrating together">
-            <img src="assets/img/gallery/team-celebration.jpg" alt="The Annie Lee's Bakery and Diner team celebrating together">
-          </div>
+          <button
+            type="button"
+            class="gallery-item__trigger"
+            data-viewer
+            data-viewer-img="assets/img/gallery/team-celebration.jpg"
+            data-viewer-name="Meet the Team"
+            data-viewer-desc="The hands behind every cake — our Jacksonville team, celebrating together in the shop."
+            data-viewer-price=""
+            data-viewer-ingredients="">
+            <div class="circle-photo">
+              <img data-scroll-zoom src="assets/img/gallery/team-celebration.jpg" alt="The Annie Lee's Bakery and Diner team celebrating together">
+            </div>
+          </button>
           <h4>Meet the Team</h4>
           <span>Behind the Counter</span>
+          <div class="gallery-item__hint">View the full story &rarr;</div>
         </div>
       </div>
 
       <div class="gallery-cta" data-reveal>
         <a href="#gallery" class="btn btn--gold">Watch the Cake Reveals</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ASSEMBLY STORY ================================================== -->
+  <section class="section story" data-pause-offscreen>
+    <div class="container">
+      <div class="center" data-reveal style="max-width:640px; margin-bottom:60px;">
+        <div class="eyebrow">Behind the Scenes</div>
+        <h2 class="section-title">How We Build <em>Your</em> Cake</h2>
+        <p class="section-sub center">Every custom cake follows the same five steps — whether it's a simple slice or a three-tier showstopper.</p>
+      </div>
+
+      <div class="story__grid">
+        <div class="story__media">
+          <div class="story__frame is-active" data-frame="1">
+            <img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Cake ingredients and finished buttercream work by Annie Lee's">
+            <div class="story__frame-label">Fresh Ingredients</div>
+          </div>
+          <div class="story__frame heat-shimmer" data-frame="2">
+            <img src="assets/img/gallery/construction-cake.jpg" alt="Freshly baked tiered cake by Annie Lee's">
+            <div class="steam-field" aria-hidden="true">
+              <span class="steam-wisp"></span><span class="steam-wisp"></span><span class="steam-wisp"></span>
+            </div>
+            <div class="story__frame-label">Baked to Order</div>
+          </div>
+          <div class="story__frame glaze-sweep" data-frame="3">
+            <img src="assets/img/gallery/jamaica-treats.jpg" alt="Glazed and frosted desserts by Annie Lee's">
+            <div class="story__frame-label">Filled &amp; Frosted</div>
+          </div>
+          <div class="story__frame" data-frame="4">
+            <img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="Hand-piped decorative detail by Annie Lee's">
+            <div class="story__frame-label">Hand-Piped Detail</div>
+          </div>
+          <div class="story__frame" data-frame="5">
+            <img src="assets/img/gallery/team-celebration.jpg" alt="Finished cake reveal celebration at Annie Lee's">
+            <div class="story__frame-label">The Reveal</div>
+          </div>
+        </div>
+
+        <div class="story__steps">
+          <div class="story__step is-active" data-frame="1">
+            <span class="story__step-index">Step 1</span>
+            <h3>Fresh Ingredients</h3>
+            <p>Real butter, real eggs, scratch-made batter. No mixes, no shortcuts — every cake starts the same honest way.</p>
+          </div>
+          <div class="story__step" data-frame="2">
+            <span class="story__step-index">Step 2</span>
+            <h3>Baked to Order</h3>
+            <p>Nothing is baked ahead and frozen. Your cake goes in the oven for your date, then cools before we touch it.</p>
+          </div>
+          <div class="story__step" data-frame="3">
+            <span class="story__step-index">Step 3</span>
+            <h3>Filled &amp; Frosted</h3>
+            <p>Layers are filled, crumb-coated, and finished in Swiss meringue buttercream — smoothed by hand, not a machine.</p>
+          </div>
+          <div class="story__step" data-frame="4">
+            <span class="story__step-index">Step 4</span>
+            <h3>Hand-Piped Detail</h3>
+            <p>Borders, bows, lettering, and sugar work — piped freehand to match your theme, down to the last detail.</p>
+          </div>
+          <div class="story__step" data-frame="5">
+            <span class="story__step-index">Step 5</span>
+            <h3>The Reveal</h3>
+            <p>Boxed, stabilized, and handed over ready for its moment. This is the part we build the whole cake for.</p>
+            <div class="story__cta">
+              <a href="#visit" class="btn btn--gold">Design Your Cake</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -252,7 +394,10 @@
           <div class="menu-item__price">[ $7 ]</div>
         </div>
         <div class="menu-item">
-          <div><div class="menu-item__name">Custom Celebration Cake</div><div class="menu-item__desc">Hand-sculpted, any theme — starting price, quote by design.</div></div>
+          <div class="menu-item__main">
+            <div class="menu-item__thumb"><img src="assets/img/gallery/sweet16-paris-cake.jpg" alt="" loading="lazy"></div>
+            <div><div class="menu-item__name">Custom Celebration Cake</div><div class="menu-item__desc">Hand-sculpted, any theme — starting price, quote by design.</div></div>
+          </div>
           <div class="menu-item__price">[ From $85 ]</div>
         </div>
         <div class="menu-item">
@@ -260,7 +405,10 @@
           <div class="menu-item__price">[ $32 ]</div>
         </div>
         <div class="menu-item">
-          <div><div class="menu-item__name">Candy Apple Favors</div><div class="menu-item__desc">Themed dessert-table favors, sold by the dozen.</div></div>
+          <div class="menu-item__main">
+            <div class="menu-item__thumb"><img src="assets/img/gallery/jamaica-treats.jpg" alt="" loading="lazy"></div>
+            <div><div class="menu-item__name">Candy Apple Favors</div><div class="menu-item__desc">Themed dessert-table favors, sold by the dozen.</div></div>
+          </div>
           <div class="menu-item__price">[ $28 ]</div>
         </div>
       </div>
@@ -441,7 +589,31 @@
   </div>
 </div>
 
+<!-- FULLSCREEN FOOD VIEWER ================================================== -->
+<div class="viewer" role="dialog" aria-modal="true" aria-label="Cake detail viewer">
+  <div class="viewer__inner">
+    <button class="viewer__close" aria-label="Close">&#10005;</button>
+    <div class="viewer__media">
+      <button class="viewer__nav viewer__nav--prev" aria-label="Previous cake">&#8249;</button>
+      <button class="viewer__nav viewer__nav--next" aria-label="Next cake">&#8250;</button>
+      <img src="" alt="">
+    </div>
+    <div class="viewer__panel">
+      <div class="viewer__eyebrow">Signature Creation</div>
+      <h3 class="viewer__name"></h3>
+      <p class="viewer__desc"></p>
+      <div class="viewer__price"></div>
+      <div class="viewer__ingredients"></div>
+      <div class="viewer__cta">
+        <a href="#visit" class="btn btn--gold">Order Something Like This</a>
+        <a href="#visit" class="btn btn--outline">Reserve a Consultation</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 <script src="js/main.js"></script>
+<script src="js/cinematic.js" defer></script>
 </body>
 </html>
